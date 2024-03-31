@@ -3,47 +3,40 @@ name: 'build and deploy production'
 on:
   push:
     tags:
-      - '*' #เมื่อมีการติด Tags หรือก็คือการ release ใน github action จะทำงานดังข้างล่าง
+      - '*'
 
 jobs:
-  build-production-job: #นำ Tags ที่ได้ไป build เเล้วจะได้ Artifact ออกมา
+  release-docker-image-job:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - name: Build image and push to Github Packages (Docker Registry or Docker Hub)
+        uses: mr-smithers-excellent/docker-build-push@v6
         with:
-          php-version: '7.4'
+          image: ${{ github.event.repository.name }}
+          registry: ghcr.io #เอาไว้เก็บ docker image เป็นบริการของ github ต้องเป็นชื่อนี้ .io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: npm ci
-
-      - name: Run production job (create dist folder)
-        run: npm run build
-
-      - name: Upload dist folder artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist-production
-          path: dist
-
-  deploy-to-produvtion: #นำ Artifact ไป deploy เเล้วจะได้ เว็บในการเปิดเว็บไซต์นั้นออกมาหรือก็คือได้ https ที่เปิดเว็บได้นั่นเอง
-    needs: build-production-job
+  auto-deploy-docker-job:
+    needs: release-docker-image-job
     runs-on: ubuntu-latest
+    env:
+      CONTAINER_NAME: 'akenarin-vue-app'
+      DOCKER_IMAGE_URL: 'ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}:${{ github.ref_name }}'
     steps:
-      - name: Download dist folder artifacts
-        uses: actions/download-artifact@v3
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          name: dist-production
-          path: disk
-
-      - run: ls disk
-      #ให้ deploy เอง manual เช่น ssh
-
-      - uses: actions/checkout@v4
-      - name: publish vue to github pages #deploy ไป github pages
-        uses: SerhiiKa/VuePagesAction@1.0.4
-        with:
-          username: ${{ github.actor }} #Nattha1
-          reponame: ${{ github.event.repository.name }} #vue-github-app
-          token: ${{ secrets.GITHUB_TOKEN }}
+          host: '159.223.41.181'
+          username: 'root'
+          password: '$Admin_1jj395qu'
+          port: '22'
+          script: |
+            whoami
+            docker logout ghcr.io
+            docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}
+            docker rm -f ${{ env.CONTAINER_NAME }}
+            docker pull ${{ env.DOCKER_IMAGE_URL }}
+            docker run --restart=always -d --name ${{ env.CONTAINER_NAME }} -p 9001:80 ${{ env.DOCKER_IMAGE_URL }}
