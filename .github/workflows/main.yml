@@ -2,10 +2,8 @@ name: Deploy to GitHub Pages on Release
 
 on:
   push:
-    branches:
-      - main
-  release:
-    types: [published]
+    tags:
+      - '*'
 
 jobs:
   deploy:
