@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages on Release
+name: Build PHP File and Create Artifact
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - '*'
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,19 +16,18 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.0'
+        php-version: '8.0'  # เลือกเวอร์ชัน PHP ที่ต้องการ
 
     - name: Install dependencies
       run: composer install
 
-    - name: Build website
+    - name: Build PHP file
       run: |
-        # ตรวจสอบคำสั่งที่คุณใช้ในการ build หรือ compile เว็บไซต์ PHP ของคุณ
-        # เช่น การสร้างไฟล์ HTML หรือไฟล์ที่ต้องการ
+        # ใส่คำสั่งที่ใช้ในการ build ไฟล์ PHP ของคุณ
+        # เช่นการสร้างไฟล์, การทำการประมวลผล, หรือการคอมไพล์
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Create artifact
+      uses: actions/upload-artifact@v2
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./path/to/your/website
-
+        name: php-files  # ตั้งชื่อของ artifact
+        path: ./path/to/your/php/files  # ระบุพาธไปยังไดเร็กทอรีที่มีไฟล์ PHP ของคุณ
