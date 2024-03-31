@@ -25,10 +25,12 @@ jobs:
       - name: Check PHP syntax
         run: php -l .
 
+      - name: Generate JSON file
+        run: |
+          # ทำการสร้างไฟล์ JSON หรือเรียกใช้ API ตามความต้องการของคุณ
+
       - name: Upload dist folder artifacts
         uses: actions/upload-artifact@v3
         with:
           name: dist-production
-          path: dist
-      # เพิ่มขั้นตอนสำหรับการสร้างไฟล์ JSON หรือเรียกใช้ API ตามความต้องการของคุณ
-
+          path: dist  # ระบุพาธไปยังไดเร็กทอรีหรือไฟล์ที่ต้องการสร้าง artifact
