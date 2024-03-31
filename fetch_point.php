@@ -12,9 +12,10 @@ $request_data = json_decode(file_get_contents('php://input'), true);
 
 // เชื่อมต่อฐานข้อมูล
 $host = 'localhost';
-$dbname = 'Scinema';
+$dbname = 'php_docker';
 $username = 'root';
 $password = '';
+
 
 $conn = new mysqli($host, $username, $password, $dbname);
 

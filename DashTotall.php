@@ -186,9 +186,10 @@
                     <?php
                     // เชื่อมต่อกับฐานข้อมูล
                     $host = 'localhost';
-                    $dbname = 'Scinema';
+                    $dbname = 'php_docker';
                     $username = 'root';
-                    $password = 'root';
+                    $password = '';
+
 
                     $conn = new mysqli($host, $username, $password, $dbname);
 

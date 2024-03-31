@@ -2,9 +2,10 @@
 session_start();
 
 $host = 'localhost';
-$dbname = 'Scinema';
+$dbname = 'php_docker';
 $username = 'root';
-$password = 'root';
+$password = '';
+
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);

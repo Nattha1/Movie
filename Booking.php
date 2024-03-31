@@ -3,7 +3,7 @@ session_start();
 
 // ติดต่อฐานข้อมูล
 $host = 'localhost';
-$dbname = 'Scinema';
+$dbname = 'php_docker';
 $username = 'root';
 $password = 'root';
 
