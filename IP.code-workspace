@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../GitTestFontEnd/vue-github-app"
+		}
+	],
+	"settings": {
+		"DockerRun.DisableDockerrc": true
+	}
+}

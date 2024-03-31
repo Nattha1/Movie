@@ -89,9 +89,10 @@
 
     // Database connection parameters
     $host = 'localhost';
-    $dbname = 'Scinema';
+    $dbname = 'php_docker';
     $username = 'root';
     $password = '';
+    
 
     // Create connection
     $conn = new mysqli($host, $username, $password, $dbname);

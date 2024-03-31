@@ -15,9 +15,10 @@ $user_id = $_SESSION['user_id'];
 // Database connection parameters
 // ติดต่อฐานข้อมูล
 $host = 'localhost';
-$dbname = 'Scinema';
+$dbname = 'php_docker';
 $username = 'root';
 $password = '';
+
 // Create connection
 $conn = new mysqli($host, $username, $password, $dbname);
 
