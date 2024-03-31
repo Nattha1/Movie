@@ -2,6 +2,6 @@
     "name": "Movie",
     "description": "Noo",
     "require": {
-        "php": "8"
+        "php": "^8"
     }
 }
