@@ -17,7 +17,7 @@ $user_id = $_SESSION['user_id'];
 $host = 'localhost';
 $dbname = 'Scinema';
 $username = 'root';
-$password = 'root';
+$password = '';
 // Create connection
 $conn = new mysqli($host, $username, $password, $dbname);
 

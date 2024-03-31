@@ -89,9 +89,9 @@
 
     // Database connection parameters
     $host = 'localhost';
-    $dbname = 'scinema';
+    $dbname = 'Scinema';
     $username = 'root';
-    $password = 'root';
+    $password = '';
 
     // Create connection
     $conn = new mysqli($host, $username, $password, $dbname);

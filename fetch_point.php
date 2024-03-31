@@ -14,7 +14,7 @@ $request_data = json_decode(file_get_contents('php://input'), true);
 $host = 'localhost';
 $dbname = 'Scinema';
 $username = 'root';
-$password = 'root';
+$password = '';
 
 $conn = new mysqli($host, $username, $password, $dbname);
 
