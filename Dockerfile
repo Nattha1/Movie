@@ -1,14 +1,35 @@
-# Use an official PHP runtime as the base image
-FROM php:7.4-apache
+# เลือก base image ของ PHP
+FROM php:8.0-apache AS build-stage
 
-# Set the working directory in the container
-WORKDIR /var/www/html
+# set working directory
+WORKDIR /app
 
-# Copy the current directory contents into the container at /var/www/html
-COPY . /var/www/html
+# copy composer.json and composer.lock to workdir
+COPY composer.json composer.lock ./
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
+# install app dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-# Run Apache server with PHP support when the container launches
-CMD ["apache2-foreground"]
+# copy everything (source code) to docker environment (workdir)
+COPY . ./
+
+# build production (ไม่จำเป็นหากไม่มีการ build ใน PHP)
+# RUN php artisan build (ตัวอย่างเท่านี้)
+
+# Stage 2
+FROM nginx:1.25.0-alpine AS production-stage
+
+# set working directory
+WORKDIR /usr/share/nginx/html
+
+# remove all default files nginx
+RUN rm -rf ./*
+
+# copy nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# copy all files and folders from the build stage to workdir
+COPY --from=build-stage /app/public .
+
+# กำหนด entrypoint เพื่อให้ nginx เริ่มต้นทันทีเมื่อ container ถูกเริ่มต้น
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
