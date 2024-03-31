@@ -1,0 +1,42 @@
+name: Docker Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # สร้าง Docker image
+      - name: Build Docker image
+        run: docker build -t myapp .
+
+      # Push Docker image ไปยัง Docker Hub
+      - name: Push Docker image
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker tag myapp "${{ secrets.DOCKER_USERNAME }}/myapp"
+          docker push "${{ secrets.DOCKER_USERNAME }}/myapp"
+
+      # Deploy Docker container
+      - name: Deploy Docker container
+        run: |
+          docker run -d -p 8080:80 --name myapp-container "${{ secrets.DOCKER_USERNAME }}/myapp"
+
+      # เพิ่มขั้นตอนทดสอบ
+      - name: Run Tests
+        run: |
+          # สั่งรันการทดสอบของคุณที่นี่
+
+      # เพิ่มขั้นตอนในการทำความสะอาดหรือการบูรณะ
+      - name: Clean Up
+        run: |
+          # สั่งรันขั้นตอนการทำความสะอาดหรือการบูรณะของคุณที่นี่
+
+      # เพิ่มขั้นตอนเพิ่มเติมตามความต้องการ
