@@ -1,0 +1,44 @@
+name: 'build and deploy production'
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release-docker-image-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image and push to Github Packages (Docker Registry or Docker Hub)
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: ${{ github.event.repository.name }}
+          registry: ghcr.io #เอาไว้เก็บ docker image เป็นบริการของ github ต้องเป็นชื่อนี้ .io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+  auto-deploy-docker-job:
+    needs: release-docker-image-job
+    runs-on: ubuntu-latest
+    env:
+      CONTAINER_NAME: 'akenarin-vue-app'
+      DOCKER_IMAGE_URL: 'ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}:${{ github.ref_name }}'
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: '159.223.41.181'
+          username: 'root'
+          password: '$Admin_1jj395qu'
+          port: '22'
+          script: |
+            whoami
+            docker logout ghcr.io
+            docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}
+            docker rm -f ${{ env.CONTAINER_NAME }}
+            docker pull ${{ env.DOCKER_IMAGE_URL }}
+            docker run --restart=always -d --name ${{ env.CONTAINER_NAME }} -p 9001:80 ${{ env.DOCKER_IMAGE_URL }}
+
+            
